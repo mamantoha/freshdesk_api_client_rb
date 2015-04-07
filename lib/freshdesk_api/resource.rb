@@ -6,6 +6,19 @@ module FreshdeskAPI
     # @return [Hash] The resource's attributes
     attr_reader :attributes
 
+    class << self
+      # The singular resource name taken from the class name (e.g. FreshdeskAPI::SoulutionCategory -> solution_category)
+      def singular_resource_name
+        @singular_respurce_name ||= to_s.split('::').last.underscore
+
+      end
+
+      # The resource name taken from the class name (e.g. FreshdeskAPI::SolutionCatogory -> solution_categories)
+      def resource_name
+        @resource_name ||= singular_resource_name.pluralize
+      end
+    end
+
     # Create a new resource instance.
     # @param [Client] client The client to use
     # @param [Hash] attributes The optional attributes that describe the resource
@@ -23,6 +36,17 @@ module FreshdeskAPI
     # Has this been object been created server-side? Does this by checking for an id.
     def new_record?
       id.nil?
+    end
+
+    # @private
+    def to_s
+      "#{self.class.singular_resource_name}: #{attributes.inspect}"
+    end
+    alias :inspect :to_s
+
+    # @private
+    def inspect
+      "#<#{self.class.name} #{@attributes.to_hash.inspect}>"
     end
 
   end

@@ -20,6 +20,11 @@ module FreshdeskAPI
       def api_url(options = {})
         "/solution/categories/%{category_id}/folders" % options
       end
+
+      def collection_namespace
+        'category/folders'
+      end
+
     end
 
   end

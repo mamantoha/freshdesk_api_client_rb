@@ -1,23 +1,36 @@
+require 'active_support/core_ext/string'
 require 'rest_client'
 require 'multi_json'
 require 'deep_merge'
 require 'pry'
 
 require 'freshdesk_api/version'
+require 'freshdesk_api/helpers'
 require 'freshdesk_api/configuration'
 require 'freshdesk_api/resource'
+require 'freshdesk_api/collection'
+require 'freshdesk_api/error'
 
 # Supported API resources
 require 'freshdesk_api/resources/solution_category'
 require 'freshdesk_api/resources/solution_folder'
 require 'freshdesk_api/resources/solution_article'
 
-
 module FreshdeskAPI
   # The top-level class that handles configuration and connection to the Freshdesk API.
   class Client
     # @return [Configuration] Config instance
     attr_reader :config
+
+    # Handles resources such as 'tickets'.
+    # @return [Collection] Collection instance for resource
+    def method_missing(method, *args, &block)
+      method = method.to_s
+      method_class = method_as_class(method)
+      options = args.last.is_a?(Hash) ? args.pop : {}
+
+      FreshdeskAPI::Collection.new(self, method_class, options)
+    end
 
     # Creates a new {Client} instance and yields {#config}.
     #
@@ -43,6 +56,21 @@ module FreshdeskAPI
       @connection ||= build_connection
     end
 
+    def make_request!(path, method, options = {})
+      response = connection[path].send(method, options) # { |response, request, result|
+        # case response.code
+        # when 302
+        #   # Connection to the server failed. Please check username/password
+        # when 404
+        #   raise Error::ResourceNotFound
+        # when 406
+        #   raise Error::NotAcceptable
+        # end
+      # }
+    rescue Exception
+      raise
+    end
+
     protected
 
     # Called by {#connection} to build a connection.
@@ -58,6 +86,10 @@ module FreshdeskAPI
     end
 
     private
+
+    def method_as_class(method)
+      klass_as_string = ("FreshdeskAPI::" + method.to_s.singularize.classify).constantize
+    end
 
     def check_url
       if !config.allow_http && config.base_url !~ /^https/

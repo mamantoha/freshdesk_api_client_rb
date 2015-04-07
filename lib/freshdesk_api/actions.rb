@@ -7,11 +7,6 @@ module FreshdeskAPI
     end
   end
 
-  # Represents a collection of resources
-  module Collection
-
-  end
-
   module Read
     def self.extended(klass)
       klass.send(:include, ResponseHandler)
@@ -26,7 +21,7 @@ module FreshdeskAPI
 
       path = api_url(options) + "/#{options[:id]}"
 
-      response = client.connection[path].get
+      response = client.make_request!(path, :get)
 
       new(client).tap do |resource|
         resource.handle_response(response)
@@ -50,7 +45,7 @@ module FreshdeskAPI
         req_path = api_url(options) + "/#{id}"
       end
 
-      response = @client.connection[req_path].send(method, options)
+      response = @client.make_request!(req_path, method, options)
 
       handle_response(response)
     end
@@ -108,7 +103,7 @@ module FreshdeskAPI
 
     def destroy!
       path = api_url + "/#{id}"
-      @client.connection[path].delete
+      @client.make_request!(path, :delete)
     end
 
     module ClassMethods

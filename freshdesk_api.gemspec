@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "rest-client"
   spec.add_runtime_dependency "multi_json"
   spec.add_runtime_dependency "deep_merge"
