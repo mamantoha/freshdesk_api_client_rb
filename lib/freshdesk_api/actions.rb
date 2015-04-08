@@ -23,7 +23,7 @@ module FreshdeskAPI
 
       response = client.make_request!(path, :get)
 
-      new(client).tap do |resource|
+      new(@client).tap do |resource|
         resource.handle_response(response)
       end
     end
@@ -34,6 +34,7 @@ module FreshdeskAPI
 
     # Create or save resource.
     # Executes a POST if it is a {Data#new_record?}, otherwise a PUT.
+    # @return [Resource] created or updated object
     def save!(options = {})
       options = { request_namespace => attributes }
 
@@ -48,6 +49,17 @@ module FreshdeskAPI
       response = @client.make_request!(req_path, method, options)
 
       handle_response(response)
+      return self
+    end
+
+    # Saves, returning false if it fails and attachibg the errors
+    def save(options = {}, &block)
+      save!(options, &block)
+    rescue FreshdeskAPI::Error::RecordInvalid => e
+      @errors = e.errors
+      false
+    rescue FreshdeskAPI::Error::ClientError
+      false
     end
   end
 
@@ -80,6 +92,11 @@ module FreshdeskAPI
       base.extend(ClassMethods)
     end
 
+    def update!(attributes = {})
+      self.attributes.merge!(attributes)
+      self.save!
+    end
+
     module ClassMethods
       # Updates a resource given the id passed in
       # @params [Client] client The {Client} object to be used
@@ -107,6 +124,9 @@ module FreshdeskAPI
     end
 
     module ClassMethods
+      # Deteles a resource given the id passed in.
+      # @params [Client] client The {Client} object to be used
+      # @param [Hash] attributes The optional parameters to pass. Defaults to {}
       def destroy!(client, attributes = {}, &block)
         new(client, attributes).destroy!(&block)
       end

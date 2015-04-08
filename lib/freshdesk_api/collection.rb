@@ -13,6 +13,22 @@ module FreshdeskAPI
       @resource_class = resource
       @resource = resource.resource_name
       @options = options
+
+      methods = %w{ create find update destroy }
+      methods += methods.map { |method| method + '!' }
+      methods.each do |deferrable|
+        # Passes arguments and the proper path to the resource class method.
+        # @param [Hash] options Options or attributes to pass
+        define_singleton_method deferrable do |*args|
+          unless @resource_class.respond_to?(deferrable)
+            raise NoMethodError.new("undefined method \"#{deferrable}\" for #{@resource_class}", deferrable, args)
+          end
+
+          opts = args.last.is_a?(Hash) ? args.pop : {}
+          @resource_class.send(deferrable, @client, opts)
+        end
+      end
+
     end
 
     # The API path to this collection

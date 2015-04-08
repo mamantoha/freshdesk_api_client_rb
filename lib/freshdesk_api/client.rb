@@ -57,7 +57,8 @@ module FreshdeskAPI
     end
 
     def make_request!(path, method, options = {})
-      response = connection[path].send(method, options) # { |response, request, result|
+      response = nil
+      connection[path].send(method, options) { |resp, req, result|
         # case response.code
         # when 302
         #   # Connection to the server failed. Please check username/password
@@ -66,9 +67,11 @@ module FreshdeskAPI
         # when 406
         #   raise Error::NotAcceptable
         # end
-      # }
-    rescue Exception
-      raise
+        response = resp
+      }
+      return response
+    rescue Exception => e
+      raise Error::ClientError
     end
 
     protected

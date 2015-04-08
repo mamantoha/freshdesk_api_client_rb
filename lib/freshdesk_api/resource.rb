@@ -6,6 +6,9 @@ module FreshdeskAPI
     # @return [Hash] The resource's attributes
     attr_reader :attributes
 
+    # @return [Array] The last received errors
+    attr_accessor :errors
+
     class << self
       # The singular resource name taken from the class name (e.g. FreshdeskAPI::SoulutionCategory -> solution_category)
       def singular_resource_name
