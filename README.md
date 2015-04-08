@@ -5,6 +5,10 @@ Welcome to `freshdesk_api` gem! In this directory, you'll find the files you nee
 
 ## Installation
 
+The Freshdesk API client can be installd using Bundler or Rubygems.
+
+### Bundler
+
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -17,15 +21,55 @@ And then execute:
 $ bundle
 ```
 
+### Rubygems
+
 Or install it yourself as:
 
 ```
 $ gem install freshdesk_api
 ```
 
+## Configuration
+
+Configuration is done through a block returning an instance of `FreshdeskAPI::Client`. The block is mandatory and if not passed, an `ArgumentError` will be thrown.
+
+```ruby
+require 'freshdesk_api'
+
+client = FreshdeskAPI::Client.new do |config|
+  config.base_url = '<- your-freshdesk-url ->' # e.g. 'https://mydesk.freshdesk.com'
+  config.username = 'login.email@freshdesk.com'
+  config.password = 'your freshdesk password'
+end
+```
+
+Note: This FreshdeskAPI API client only supports basic authentication at the moment.
+
 ## Usage
 
-TODO: Write usage instructions here
+The result of configuration is an instance of `FreshdeskAPI::Client` which can then be used in two different methods.
+
+One way to use the client is to pass it in as an argument to individual classes.
+
+```ruby
+FreshdeskAPI::SolutionCategory.create!(client, name: 'API', description: 'API related documents')
+FreshdeskAPI::SolutionArticle.find!(client, id: 1, 1: category_id, folder_id: 1)
+FreshdeskAPI::SolutionFolder.update!(client, id: 1, category_id: 1, name: 'Folder API')
+FreshdeskAPI::SolutionArticle.destroy!(client, id: 1, category_id: 1, folder_id: 1)
+```
+Another way is to use the instance methods under client.
+
+```ruby
+categories = client.solution_categories
+category = categories.create!(name: 'API', description: 'API related documents')
+category.update!(name: 'API v2', description: 'API related documents v2')
+category = categories.find!(id: 1)
+category.destroy!
+```
+
+The methods under `FreshdeskAPI::Client` (such as `.solution_categories`) return an instance of `FreshdeskAPI::Collection` a lazy-loaded list of that resource.
+
+Actual requests may not be sent until an explicit `FreshdeskAPI::Collection#all!`.
 
 ## Development
 
