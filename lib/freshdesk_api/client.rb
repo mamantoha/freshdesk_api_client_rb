@@ -59,14 +59,14 @@ module FreshdeskAPI
     def make_request!(path, method, options = {})
       response = nil
       connection[path].send(method, options) { |resp, req, result|
-        # case response.code
-        # when 302
-        #   # Connection to the server failed. Please check username/password
-        # when 404
-        #   raise Error::ResourceNotFound
-        # when 406
-        #   raise Error::NotAcceptable
-        # end
+        case response.code
+        when 302
+          # Connection to the server failed. Please check username/password
+        when 404
+          raise Error::ResourceNotFound
+        when 406
+          raise Error::NotAcceptable
+        end
         response = resp
       }
       return response

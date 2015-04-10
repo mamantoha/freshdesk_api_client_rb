@@ -27,6 +27,13 @@ module FreshdeskAPI
         resource.handle_response(response)
       end
     end
+
+    # Finds, returning nil if it fails
+    def find(client, options = {}, &block)
+      find!(client, options, &block)
+    rescue FreshdeskAPI::Error::ClientError => e
+      nil
+    end
   end
 
   module Save
@@ -82,6 +89,13 @@ module FreshdeskAPI
 
         response
       end
+
+      # Create a resource, returning nil if it fails
+      def create(client, attributes = {}, &block)
+        create!(client, attributes, &block)
+      rescue FreshdeskAPI::Error::ClientError
+        nil
+      end
     end
   end
 
@@ -97,6 +111,12 @@ module FreshdeskAPI
       self.save!
     end
 
+    def update(attributes = {})
+      update!(attributes = {})
+    rescue FreshdeskAPI::Error::ClientError
+      false
+    end
+
     module ClassMethods
       # Updates a resource given the id passed in
       # @params [Client] client The {Client} object to be used
@@ -110,6 +130,13 @@ module FreshdeskAPI
 
         response
       end
+
+      # Updates a resource, returning nil if it fails
+      def update(client, attributes = {}, &block)
+        update!(client, attributes, &block)
+      rescue FreshdeskAPI::Error::ClientError
+        false
+      end
     end
   end
 
@@ -118,9 +145,18 @@ module FreshdeskAPI
       klass.extend(ClassMethods)
     end
 
+    # Detetes the resource
+    # @return [Boolean] Success?
     def destroy!
       path = api_url + "/#{id}"
       @client.make_request!(path, :delete)
+      true
+    end
+
+    def destroy
+      destroy!
+    rescue FreshdeskAPI::Error::ClientError
+      false
     end
 
     module ClassMethods
@@ -129,6 +165,12 @@ module FreshdeskAPI
       # @param [Hash] attributes The optional parameters to pass. Defaults to {}
       def destroy!(client, attributes = {}, &block)
         new(client, attributes).destroy!(&block)
+      end
+
+      def destroy(client, attributes = {}, &block)
+        destroy!(client, attributes = {}, &block)
+      rescue FreshdeskAPI::Error::ClientError
+        false
       end
     end
 
