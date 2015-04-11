@@ -1,7 +1,18 @@
 # Freshdesk API Client
 
-Welcome to `freshdesk_api` gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/freshdesk_api`. To experiment with that code, run `bin/console` for an interactive prompt.
 
+A Ruby API client that interfaces with freshdesk.com web service. This client supports regular CRUD operation.
+
+Please see [API documentation](http://freshdesk.com/api) for more information.
+
+As of now,it supports the following:
+
+* Solution Category
+* Solution Folder
+* Solution Article
+
+
+To experiment with that code, run `bin/console` for an interactive prompt.
 
 ## Installation
 
