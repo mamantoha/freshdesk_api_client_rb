@@ -52,6 +52,21 @@ module FreshdeskAPI
       "#<#{self.class.name} #{@attributes.to_hash.inspect}>"
     end
 
+    # Compares resources by class and id. If id is nil, then by object_id
+    def ==(other)
+      return true if other.object_id == self.object_id
+
+      if other && !other.is_a?(Data)
+        warn "Trying to compare #{other.class} to a Resource from #{caller.first}"
+      end
+
+      if other.is_a?(Data)
+        other.id && other.id == id
+      else
+        false
+      end
+    end
+
   end
 
   # Represents a resource that can CRUD (create, read, update, destroy)
