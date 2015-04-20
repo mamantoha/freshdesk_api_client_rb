@@ -24,6 +24,7 @@ module FreshdeskAPI
       response = client.make_request!(path, :get)
 
       new(@client).tap do |resource|
+        resource.attributes.merge!(options)
         resource.handle_response(response)
       end
     end
