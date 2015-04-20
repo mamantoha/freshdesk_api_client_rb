@@ -2,7 +2,7 @@ require 'active_support/core_ext/string'
 require 'rest_client'
 require 'multi_json'
 require 'deep_merge'
-require 'pry'
+# require 'pry'
 
 require 'freshdesk_api/version'
 require 'freshdesk_api/helpers'
@@ -59,7 +59,7 @@ module FreshdeskAPI
     def make_request!(path, method, options = {})
       response = nil
       connection[path].send(method, options) { |resp, req, result|
-        case response.code
+        case resp.code
         when 302
           # Connection to the server failed. Please check username/password
         when 404
@@ -71,7 +71,7 @@ module FreshdeskAPI
       }
       return response
     rescue Exception => e
-      raise Error::ClientError
+      raise Error::ClientError.new(e)
     end
 
     protected
