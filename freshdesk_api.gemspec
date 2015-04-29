@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "activesupport"
-  spec.add_runtime_dependency "rest-client", '~> 1.6.8'
+  spec.add_runtime_dependency "rest-client"
   spec.add_runtime_dependency "multi_json"
   spec.add_runtime_dependency "deep_merge"
 
