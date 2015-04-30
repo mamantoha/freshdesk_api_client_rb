@@ -2,7 +2,6 @@ require 'active_support/core_ext/string'
 require 'rest_client'
 require 'multi_json'
 require 'deep_merge'
-# require 'pry'
 
 require 'freshdesk_api/version'
 require 'freshdesk_api/helpers'
