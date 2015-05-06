@@ -65,6 +65,8 @@ module FreshdeskAPI
           raise Error::ResourceNotFound
         when 406
           raise Error::NotAcceptable
+        when 400...600
+          raise Error::NetworkError
         end
         response = resp
       }

@@ -3,7 +3,9 @@ module FreshdeskAPI
   module ResponseHandler
     def handle_response(response)
       response = MultiJson.load(response, symbolize_keys: true)
-      @attributes.replace(@attributes.deep_merge(response[response_namespace]))
+      if response[response_namespace]
+        @attributes.replace(@attributes.deep_merge(response[response_namespace]))
+      end
     end
   end
 
@@ -40,10 +42,12 @@ module FreshdeskAPI
   module Save
     include ResponseHandler
 
-    # Create or save resource.
+    # If this resource hasn't been deleted, then create or save it.
     # Executes a POST if it is a {Data#new_record?}, otherwise a PUT.
     # @return [Resource] created or updated object
     def save!(options = {})
+      return false if respond_to?(:destroyed?) && destroyed?
+
       options = { request_namespace => attributes }
 
       if new_record?
@@ -146,14 +150,24 @@ module FreshdeskAPI
       klass.extend(ClassMethods)
     end
 
-    # Detetes the resource
-    # @return [Boolean] Success?
-    def destroy!
-      path = api_url + "/#{id}"
-      @client.make_request!(path, :delete)
-      true
+    # Has this object been deleted?
+    def destroyed?
+      @destroyed ||= false
     end
 
+    # If this resource hasn't already been deleted, then do so.
+    # instance method
+    # @return [Boolean] Success?
+    def destroy!
+      return false if destroyed? || new_record?
+
+      path = api_url + "/#{id}"
+      @client.make_request!(path, :delete)
+
+      @destroyed = true
+    end
+
+    # instance method
     def destroy
       destroy!
     rescue FreshdeskAPI::Error::ClientError
@@ -166,10 +180,11 @@ module FreshdeskAPI
       # @param [Hash] attributes The optional parameters to pass. Defaults to {}
       def destroy!(client, attributes = {}, &block)
         new(client, attributes).destroy!(&block)
+        true
       end
 
       def destroy(client, attributes = {}, &block)
-        destroy!(client, attributes = {}, &block)
+        destroy!(client, attributes, &block)
       rescue FreshdeskAPI::Error::ClientError
         false
       end

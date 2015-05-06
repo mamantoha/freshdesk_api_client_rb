@@ -17,6 +17,7 @@ module FreshdeskAPI
 
     class NotAcceptable < ClientError; end
     class ResourceNotFound < ClientError; end
+    class NetworkError < ClientError; end
 
   end
 end
