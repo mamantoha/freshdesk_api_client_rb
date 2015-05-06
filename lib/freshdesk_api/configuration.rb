@@ -22,6 +22,11 @@ module FreshdeskAPI
     # @return [Boolean] Whether to allow non-HTTPS connections for development purposes.
     attr_accessor :allow_http
 
+    # :read_timeout and :open_timeout are how long to wait for a response and
+    # to open a connection, in seconds. Pass nil to disable the timeout.
+    attr_accessor :open_timeout
+    attr_accessor :read_timeout
+
     def initialize
       @client_options = {}
     end
@@ -39,6 +44,7 @@ module FreshdeskAPI
         },
         read_timeout: nil,
         open_timeout: nil,
+        base_url: @base_url
       }.merge(client_options)
     end
   end

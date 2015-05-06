@@ -1,5 +1,10 @@
 require 'freshdesk_api'
 
+begin
+  require 'byebug'
+rescue LoadError
+end
+
 def client
   credentials = File.join(File.dirname(__FILE__), '..', 'fixtures', 'credentials.yml')
   @client ||= begin
