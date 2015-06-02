@@ -81,6 +81,7 @@ module FreshdeskAPI
     #
     # Request logger if logger is not nil
     def build_connection
+      RestClient.log = config.logger if config.logger
       RestClient::Resource.new(config.base_url, config.options.merge(auth_options))
     end
 
@@ -102,7 +103,7 @@ module FreshdeskAPI
     end
 
     def set_default_logger
-      if config.logger.nil? || config.logger == true
+      if config.logger == true
         require 'logger'
         config.logger = Logger.new($stderr)
         config.logger.level = Logger::WARN

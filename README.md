@@ -51,6 +51,9 @@ client = FreshdeskAPI::Client.new do |config|
   config.base_url = '<- your-freshdesk-url ->' # e.g. 'https://mydesk.freshdesk.com'
   config.username = 'login.email@freshdesk.com'
   config.password = 'your freshdesk password'
+
+  require 'logger'
+  config.logger = Logger.new(STDOUT)
 end
 ```
 
