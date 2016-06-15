@@ -1,5 +1,5 @@
 require 'freshdesk_api'
-require 'webmock'
+require 'webmock/rspec'
 
 begin
   require 'byebug'
@@ -8,18 +8,14 @@ end
 
 require File.join(File.dirname(__FILE__), '..', 'fixtures', 'test_resources')
 
-def client
+def fake_client
   credentials = File.join(File.dirname(__FILE__), '..', 'fixtures', 'credentials.yml')
   @client ||= begin
     client = FreshdeskAPI::Client.new do |config|
-      if File.exists?(credentials)
-        data = YAML.load(File.read(credentials))
-        config.username = data["username"]
-        config.password = data["password"]
-        config.base_url = data["base_url"]
-      else
-        STDERR.puts "add your credentials to spec/fixtures/credentials.yml (see: spec/fixtures/credentials.yml.example)"
-      end
+      data = YAML.load(File.read(credentials))
+      config.username = data["username"]
+      config.password = data["password"]
+      config.base_url = data["base_url"]
     end
 
     client

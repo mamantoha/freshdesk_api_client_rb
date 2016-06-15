@@ -3,7 +3,7 @@ require 'core/spec_helper'
 describe FreshdeskAPI::Resource do
   context "#initialize" do
     it "should require options as hash" do
-      expect { FreshdeskAPI::TestResource.new(client, '{options: 1}') }.to raise_error(RuntimeError)
+      expect { FreshdeskAPI::TestResource.new(fake_client, '{options: 1}') }.to raise_error(RuntimeError)
     end
   end
 
@@ -17,7 +17,7 @@ describe FreshdeskAPI::Resource do
       end
 
       it "should return instance of resource" do
-        expect(subject.update!(client, id: id, test: 'hello')).to be_truthy
+        expect(subject.update!(fake_client, id: id, test: 'hello')).to be_truthy
       end
 
       context "with client error" do
@@ -26,7 +26,7 @@ describe FreshdeskAPI::Resource do
         end
 
         it "should handle it properly" do
-          expect { expect(subject.update(client, id: id)).to be(false) }.to_not raise_error
+          expect { expect(subject.update(fake_client, id: id)).to be(false) }.to_not raise_error
         end
       end
     end
@@ -42,7 +42,7 @@ describe FreshdeskAPI::Resource do
       end
 
       it "should return instance of resource" do
-        expect(subject.destroy!(client, id: id)).to be(true)
+        expect(subject.destroy!(fake_client, id: id)).to be(true)
       end
 
       context "with client error" do
@@ -51,13 +51,13 @@ describe FreshdeskAPI::Resource do
         end
 
         it "should handle it properly" do
-          expect(subject.destroy(client, id: id)).to be(false)
+          expect(subject.destroy(fake_client, id: id)).to be(false)
         end
       end
     end
 
     context "instance method" do
-      subject { FreshdeskAPI::TestResource.new(client, id: '1') }
+      subject { FreshdeskAPI::TestResource.new(fake_client, id: '1') }
 
       before(:each) do
         stub_request(:delete, %r{test/resources}).to_return(status: 200)
@@ -73,7 +73,7 @@ describe FreshdeskAPI::Resource do
 
   context "#save!" do
     let(:id) { '1' }
-    subject { FreshdeskAPI::TestResource.new(client, id: id) }
+    subject { FreshdeskAPI::TestResource.new(fake_client, id: id) }
 
     before(:each) do
       stub_request(:put, %r{test/resources/#{id}}).to_return(status: 422)
@@ -87,7 +87,7 @@ describe FreshdeskAPI::Resource do
   context "#save" do
     let(:id) { '1' }
     let(:attr) { { param: "test" } }
-    subject { FreshdeskAPI::TestResource.new(client, attr.merge(id: id)) }
+    subject { FreshdeskAPI::TestResource.new(fake_client, attr.merge(id: id)) }
 
     before :each do
       stub_json_request(:put, %r{test/resources/#{id}}, json(resource:  { param: "abc" }))
@@ -118,7 +118,7 @@ describe FreshdeskAPI::Resource do
     end
 
     context "new record" do
-      subject { FreshdeskAPI::TestResource.new(client, attr) }
+      subject { FreshdeskAPI::TestResource.new(fake_client, attr) }
 
       before :each do
         stub_json_request(:post, %r{test/resources}, json(resource: attr.merge(id: id)), status: 201)
@@ -138,13 +138,13 @@ describe FreshdeskAPI::Resource do
 
   context "#new" do
     it "builds with hash" do
-      object = FreshdeskAPI::TestResource.new(client, {})
+      object = FreshdeskAPI::TestResource.new(fake_client, {})
       expect(object.attributes).to eq({})
     end
 
     it "fails to build with nil (e.g. empty response from server)" do
       expect {
-        FreshdeskAPI::TestResource.new(client, nil)
+        FreshdeskAPI::TestResource.new(fake_client, nil)
       }.to raise_error(/Expected a Hash/i)
     end
 
@@ -152,38 +152,38 @@ describe FreshdeskAPI::Resource do
 
   context "#inspect" do
     it "should display nicely" do
-      expect(FreshdeskAPI::TestResource.new(client, foo: :bar).inspect).to eq("#<FreshdeskAPI::TestResource {:foo=>:bar}>")
+      expect(FreshdeskAPI::TestResource.new(fake_client, foo: :bar).inspect).to eq("#<FreshdeskAPI::TestResource {:foo=>:bar}>")
     end
   end
 
   context "#==" do
     it "is same when id is same" do
-      expect(FreshdeskAPI::TestResource.new(client, id: 1, bar: "baz")).to eq(FreshdeskAPI::TestResource.new(client, id: 1, foo: "bar"))
+      expect(FreshdeskAPI::TestResource.new(fake_client, id: 1, bar: "baz")).to eq(FreshdeskAPI::TestResource.new(fake_client, id: 1, foo: "bar"))
     end
 
     it "is same when object_id is same" do
-      object = FreshdeskAPI::TestResource.new(client, bar: "baz")
+      object = FreshdeskAPI::TestResource.new(fake_client, bar: "baz")
       expect(object).to eq(object)
     end
 
     it "is different when both have no id" do
-      expect(FreshdeskAPI::TestResource.new(client)).to_not eq(FreshdeskAPI::TestResource.new(client))
+      expect(FreshdeskAPI::TestResource.new(fake_client)).to_not eq(FreshdeskAPI::TestResource.new(fake_client))
     end
 
     it "is different when id is different" do
-      expect(FreshdeskAPI::TestResource.new(client, id: 2)).to_not eq(FreshdeskAPI::TestResource.new(client, id: 1))
+      expect(FreshdeskAPI::TestResource.new(fake_client, id: 2)).to_not eq(FreshdeskAPI::TestResource.new(fake_client, id: 1))
     end
 
     it "is same when class is Data" do
-      expect(FreshdeskAPI::TestResource.new(client, id: 2)).to eq(FreshdeskAPI::TestResource::TestChild.new(client, id: 2))
+      expect(FreshdeskAPI::TestResource.new(fake_client, id: 2)).to eq(FreshdeskAPI::TestResource::TestChild.new(fake_client, id: 2))
     end
 
     it "is different when other is no resource" do
-      expect(FreshdeskAPI::TestResource.new(client, id: 2)).to_not eq(nil)
+      expect(FreshdeskAPI::TestResource.new(fake_client, id: 2)).to_not eq(nil)
     end
 
     it "warns about weird comparissons" do
-      object = FreshdeskAPI::TestResource.new(client, id: 2)
+      object = FreshdeskAPI::TestResource.new(fake_client, id: 2)
       expect(object).to receive(:warn)
       expect(object).to_not eq("xxx")
     end
