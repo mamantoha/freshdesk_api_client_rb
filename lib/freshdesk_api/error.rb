@@ -7,7 +7,6 @@ module FreshdeskAPI
 
       def initialize(response)
         @response = response
-        binding.pry
       end
 
       def to_s
