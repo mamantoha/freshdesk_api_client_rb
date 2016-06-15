@@ -1,5 +1,8 @@
 # Freshdesk API Client
 
+[![Build Status][travis_badge]][travis]
+[![Gem Version][rubygems_badge]][rubygems]
+[![Code Climate][codeclimate_badge]][codeclimate]
 
 A Ruby API client that interfaces with freshdesk.com web service. This client supports regular CRUD operation.
 
@@ -98,3 +101,18 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## License and Author
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+Copyright (c) 2015-2016 by Anton Maminov
+
+[travis_badge]: http://img.shields.io/travis/mamantoha/freshdesk_api_client_rb.svg?style=flat
+[travis]: https://travis-ci.org/mamantoha/freshdesk_api_client_rb
+
+[rubygems_badge]: http://img.shields.io/gem/v/freshdesk_api.svg?style=flat
+[rubygems]: https://rubygems.org/gems/freshdesk_api
+
+[codeclimate_badge]: http://img.shields.io/codeclimate/github/mamantoha/freshdesk_api_client_rb.svg?style=flat
+[codeclimate]: https://codeclimate.com/github/mamantoha/freshdesk_api_client_rb
