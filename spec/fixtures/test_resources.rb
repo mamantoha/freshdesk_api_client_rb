@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class FreshdeskAPI::TestResource < FreshdeskAPI::Resource
-  def self.test(client)
+  def self.test(_client)
     'hi'
   end
 
-  def api_url(options = {})
-    "/test/resources"
+  def api_url(_options = {})
+    '/test/resources'
   end
 
   def request_namespace
@@ -16,8 +18,8 @@ class FreshdeskAPI::TestResource < FreshdeskAPI::Resource
   end
 
   class << self
-    def api_url(options = {})
-      "/test/resources"
+    def api_url(_options = {})
+      '/test/resources'
     end
 
     def collection_namespace

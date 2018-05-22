@@ -1,5 +1,6 @@
-module FreshdeskAPI
+# frozen_string_literal: true
 
+module FreshdeskAPI
   module ResponseHandler
     def handle_response(response)
       response = MultiJson.load(response, symbolize_keys: true)
@@ -61,7 +62,7 @@ module FreshdeskAPI
       response = @client.make_request!(req_path, method, options)
 
       handle_response(response)
-      return self
+      self
     end
 
     # Saves, returning false if it fails and attachibg the errors
@@ -113,10 +114,10 @@ module FreshdeskAPI
 
     def update!(attributes = {})
       self.attributes.merge!(attributes)
-      self.save!
+      save!
     end
 
-    def update(attributes = {})
+    def update(_attributes = {})
       update!(attributes = {})
     rescue FreshdeskAPI::Error::ClientError
       false
@@ -189,6 +190,5 @@ module FreshdeskAPI
         false
       end
     end
-
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'freshdesk_api/actions'
 
 module FreshdeskAPI
@@ -13,7 +15,6 @@ module FreshdeskAPI
       # The singular resource name taken from the class name (e.g. FreshdeskAPI::SoulutionCategory -> solution_category)
       def singular_resource_name
         @singular_respurce_name ||= to_s.split('::').last.underscore
-
       end
 
       # The resource name taken from the class name (e.g. FreshdeskAPI::SolutionCatogory -> solution_categories)
@@ -45,7 +46,7 @@ module FreshdeskAPI
     def to_s
       "#{self.class.singular_resource_name}: #{attributes.inspect}"
     end
-    alias :inspect :to_s
+    alias inspect to_s
 
     # @private
     def inspect
@@ -54,7 +55,7 @@ module FreshdeskAPI
 
     # Compares resources by class and id. If id is nil, then by object_id
     def ==(other)
-      return true if other.object_id == self.object_id
+      return true if other.object_id == object_id
 
       if other && !other.is_a?(Data)
         warn "Trying to compare #{other.class} to a Resource from #{caller.first}"
@@ -66,7 +67,6 @@ module FreshdeskAPI
         false
       end
     end
-
   end
 
   # Represents a resource that can CRUD (create, read, update, destroy)
@@ -76,5 +76,4 @@ module FreshdeskAPI
     include Update
     include Destroy
   end
-
 end
