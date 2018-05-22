@@ -4,9 +4,8 @@ module FreshdeskAPI
   module ResponseHandler
     def handle_response(response)
       response = MultiJson.load(response, symbolize_keys: true)
-      if response[response_namespace]
-        @attributes.replace(@attributes.deep_merge(response[response_namespace]))
-      end
+      return unless response[response_namespace]
+      @attributes.replace(@attributes.deep_merge(response[response_namespace]))
     end
   end
 
@@ -35,7 +34,7 @@ module FreshdeskAPI
     # Finds, returning nil if it fails
     def find(client, options = {}, &block)
       find!(client, options, &block)
-    rescue FreshdeskAPI::Error::ClientError => e
+    rescue FreshdeskAPI::Error::ClientError
       nil
     end
   end
@@ -46,7 +45,7 @@ module FreshdeskAPI
     # If this resource hasn't been deleted, then create or save it.
     # Executes a POST if it is a {Data#new_record?}, otherwise a PUT.
     # @return [Resource] created or updated object
-    def save!(options = {})
+    def save!(_options = {})
       return false if respond_to?(:destroyed?) && destroyed?
 
       options = { request_namespace => attributes }
@@ -117,8 +116,8 @@ module FreshdeskAPI
       save!
     end
 
-    def update(_attributes = {})
-      update!(attributes = {})
+    def update(attributes)
+      update!(attributes)
     rescue FreshdeskAPI::Error::ClientError
       false
     end

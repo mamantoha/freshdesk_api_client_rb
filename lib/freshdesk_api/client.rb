@@ -63,6 +63,7 @@ module FreshdeskAPI
         case resp.code
         when 302
           # Connection to the server failed. Please check username/password
+          raise Error::NotAcceptable
         when 404
           raise Error::ResourceNotFound
         when 406
@@ -73,7 +74,7 @@ module FreshdeskAPI
         response = resp
       end
       response
-    rescue Exception => e
+    rescue StandardError => e
       raise Error::ClientError, e
     end
 
@@ -95,21 +96,20 @@ module FreshdeskAPI
     private
 
     def method_as_class(method)
-      klass_as_string = ('FreshdeskAPI::' + method.to_s.singularize.classify).constantize
+      "FreshdeskAPI::#{method.to_s.singularize.classify}".constantize
     end
 
     def check_url
-      if !config.allow_http && config.base_url !~ /^https/
-        raise ArgumentError, 'freshdesk_api is ssl only; url must begin with https://'
-      end
+      return unless !config.allow_http && config.base_url !~ /^https/
+      raise ArgumentError, 'freshdesk_api is ssl only; url must begin with https://'
     end
 
     def set_default_logger
-      if config.logger == true
-        require 'logger'
-        config.logger = Logger.new($stderr)
-        config.logger.level = Logger::WARN
-      end
+      return unless config.logger
+
+      require 'logger'
+      config.logger = Logger.new($stderr)
+      config.logger.level = Logger::WARN
     end
   end
 end

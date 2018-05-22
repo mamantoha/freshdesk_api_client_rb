@@ -7,7 +7,7 @@ module FreshdeskAPI
     # Need to specify category_id in url
 
     def api_url(_options = {})
-      format('/solution/categories/%{category_id}/folders', attributes)
+      format('/solution/categories/%<category_id>/folders', attributes)
     end
 
     def request_namespace
@@ -20,7 +20,7 @@ module FreshdeskAPI
 
     class << self
       def api_url(options = {})
-        format('/solution/categories/%{category_id}/folders', options)
+        format('/solution/categories/%<category_id>/folders', options)
       end
 
       def collection_namespace

@@ -14,7 +14,7 @@ module FreshdeskAPI
     class << self
       # The singular resource name taken from the class name (e.g. FreshdeskAPI::SoulutionCategory -> solution_category)
       def singular_resource_name
-        @singular_respurce_name ||= to_s.split('::').last.underscore
+        @singular_resource_name ||= to_s.split('::').last.underscore
       end
 
       # The resource name taken from the class name (e.g. FreshdeskAPI::SolutionCatogory -> solution_categories)
@@ -46,7 +46,6 @@ module FreshdeskAPI
     def to_s
       "#{self.class.singular_resource_name}: #{attributes.inspect}"
     end
-    alias inspect to_s
 
     # @private
     def inspect
@@ -58,7 +57,7 @@ module FreshdeskAPI
       return true if other.object_id == object_id
 
       if other && !other.is_a?(Data)
-        warn "Trying to compare #{other.class} to a Resource from #{caller.first}"
+        warn "Trying to compare #{other.class} to a Resource from #{caller(1..1).first}"
       end
 
       if other.is_a?(Data)

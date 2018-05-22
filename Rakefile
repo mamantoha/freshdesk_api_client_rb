@@ -2,11 +2,7 @@
 
 require 'rake/testtask'
 require 'bundler/gem_tasks'
-
-begin
-  require 'rspec/core/rake_task'
-rescue LoadError
-end
+require 'rspec/core/rake_task'
 
 if defined?(RSpec)
   desc 'Run specs'
