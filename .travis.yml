@@ -1,8 +1,9 @@
 language: ruby
-install:
+before_install:
   - gem install bundler
 rvm:
   - 2.5.1
   - 2.4.4
   - jruby-9.1.9.0
   - jruby-head
+sudo: false
