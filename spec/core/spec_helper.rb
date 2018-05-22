@@ -1,21 +1,18 @@
+# frozen_string_literal: true
+
 require 'freshdesk_api'
 require 'webmock/rspec'
-
-begin
-  require 'byebug'
-rescue LoadError
-end
 
 require File.join(File.dirname(__FILE__), '..', 'fixtures', 'test_resources')
 
 def fake_client
   credentials = File.join(File.dirname(__FILE__), '..', 'fixtures', 'credentials.yml')
-  @client ||= begin
+  @fake_client ||= begin
     client = FreshdeskAPI::Client.new do |config|
-      data = YAML.load(File.read(credentials))
-      config.username = data["username"]
-      config.password = data["password"]
-      config.base_url = data["base_url"]
+      data = YAML.safe_load(File.read(credentials))
+      config.username = data['username']
+      config.password = data['password']
+      config.base_url = data['base_url']
     end
 
     client
@@ -36,7 +33,6 @@ module TestHelper
       }
     }.deep_merge(options))
   end
-
 end
 
 RSpec.configure do |c|
@@ -46,5 +42,3 @@ RSpec.configure do |c|
 
   c.include TestHelper
 end
-
-include WebMock::API

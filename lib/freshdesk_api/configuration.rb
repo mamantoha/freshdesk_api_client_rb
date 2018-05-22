@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FreshdeskAPI
   # Holds the configuration options for the client and connection
   class Configuration

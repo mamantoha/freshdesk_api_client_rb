@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'freshdesk_api/resource'
 
 module FreshdeskAPI
   class SolutionCategory < Resource
-    def api_url(options = {})
-      "/solution/categories"
+    def api_url(_options = {})
+      '/solution/categories'
     end
 
     def request_namespace
@@ -14,16 +16,14 @@ module FreshdeskAPI
       :category
     end
 
-
     class << self
-      def api_url(options = {})
-        "/solution/categories"
+      def api_url(_options = {})
+        '/solution/categories'
       end
 
       def collection_namespace
         'category'
       end
     end
-
   end
 end

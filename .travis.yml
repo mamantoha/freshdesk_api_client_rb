@@ -1,13 +1,11 @@
 language: ruby
-install:
-  - gem uninstall bundler
-  - gem install bundler
-before_script: bin/setup
-script: rspec
+before_install:
+  - gem update bundler
+  - bundle --version
+  - gem update --system
+  - gem --version
 rvm:
-  - 2.3.0
-  - 2.2.4
-  - 2.1.8
-  - 2.0.0
-  - jruby
-  - rbx-2
+  - 2.5.1
+  - 2.4.4
+  - jruby-head
+sudo: false

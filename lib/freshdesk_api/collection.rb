@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FreshdeskAPI
   # Represents a collection of resources
   class Collection
@@ -14,7 +16,7 @@ module FreshdeskAPI
       @resource = resource.resource_name
       @options = options
 
-      methods = %w{ create find update destroy }
+      methods = %w[create find update destroy]
       methods += methods.map { |method| method + '!' }
       methods.each do |deferrable|
         # Passes arguments and the proper path to the resource class method.
@@ -28,7 +30,6 @@ module FreshdeskAPI
           @resource_class.send(deferrable, @client, opts)
         end
       end
-
     end
 
     # The API path to this collection
@@ -80,10 +81,7 @@ module FreshdeskAPI
         inspect << "options=#{@options.inspect}" if @options.any?
         "#{@resource.singularize} collection [#{inspect.join(',')}]"
       end
-
     end
-    alias :inspect :to_s
-
+    alias inspect to_s
   end
-
 end

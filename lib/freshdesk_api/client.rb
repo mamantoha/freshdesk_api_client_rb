@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/string'
 require 'rest_client'
 require 'multi_json'
@@ -23,7 +25,7 @@ module FreshdeskAPI
 
     # Handles resources such as 'tickets'.
     # @return [Collection] Collection instance for resource
-    def method_missing(method, *args, &block)
+    def method_missing(method, *args)
       method = method.to_s
       method_class = method_as_class(method)
       options = args.last.is_a?(Hash) ? args.pop : {}
@@ -57,10 +59,11 @@ module FreshdeskAPI
 
     def make_request!(path, method, options = {})
       response = nil
-      connection[path].send(method, options) { |resp, req, result|
+      connection[path].send(method, options) do |resp, _req, _result|
         case resp.code
         when 302
           # Connection to the server failed. Please check username/password
+          raise Error::NotAcceptable
         when 404
           raise Error::ResourceNotFound
         when 406
@@ -69,10 +72,10 @@ module FreshdeskAPI
           raise Error::NetworkError
         end
         response = resp
-      }
-      return response
-    rescue Exception => e
-      raise Error::ClientError.new(e)
+      end
+      response
+    rescue StandardError => e
+      raise Error::ClientError, e
     end
 
     protected
@@ -93,22 +96,20 @@ module FreshdeskAPI
     private
 
     def method_as_class(method)
-      klass_as_string = ("FreshdeskAPI::" + method.to_s.singularize.classify).constantize
+      "FreshdeskAPI::#{method.to_s.singularize.classify}".constantize
     end
 
     def check_url
-      if !config.allow_http && config.base_url !~ /^https/
-        raise ArgumentError, "freshdesk_api is ssl only; url must begin with https://"
-      end
+      return unless !config.allow_http && config.base_url !~ /^https/
+      raise ArgumentError, 'freshdesk_api is ssl only; url must begin with https://'
     end
 
     def set_default_logger
-      if config.logger == true
-        require 'logger'
-        config.logger = Logger.new($stderr)
-        config.logger.level = Logger::WARN
-      end
-    end
+      return unless config.logger
 
+      require 'logger'
+      config.logger = Logger.new($stderr)
+      config.logger.level = Logger::WARN
+    end
   end
 end
